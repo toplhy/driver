@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lhy.driver.dao.TrafficDao">
+
+    <select id="getMenuByPIdIsNull" resultType="com.lhy.driver.pojo.TrafficMenu">
+        SELECT * FROM t_trafficmenu WHERE pid IS NULL
+    </select>
+
+    <select id="getMenuByPId" resultType="com.lhy.driver.pojo.TrafficMenu">
+        SELECT * FROM t_trafficmenu WHERE pid = #{pid}
+    </select>
+
+    <insert id="addTrafficMenu" parameterType="com.lhy.driver.pojo.TrafficMenu">
+        INSERT INTO t_trafficmenu(name,pid) VALUES(#{name},#{pid})
+    </insert>
+
+    <update id="updateTrafficMenu" parameterType="com.lhy.driver.pojo.TrafficMenu">
+        UPDATE t_trafficmenu SET name = #{name} WHERE id = #{id}
+    </update>
+
+    <delete id="deleteTrafficMenu" parameterType="java.lang.Long">
+        DELETE FROM t_trafficmenu WHERE id = #{id}
+    </delete>
+
+    <select id="findContentByTId" resultType="com.lhy.driver.pojo.TrafficContent">
+        SELECT * FROM t_trafficcontent WHERE tid = #{tid}
+    </select>
+
+    <insert id="saveTrafficContent" parameterType="com.lhy.driver.pojo.TrafficContent">
+        INSERT INTO t_trafficcontent(tid,content) VALUES(#{tid},#{content})
+    </insert>
+
+    <update id="updateTrafficContent" parameterType="com.lhy.driver.pojo.TrafficContent">
+        UPDATE t_trafficcontent SET content = #{content} WHERE id = #{id}
+    </update>
+
+</mapper>

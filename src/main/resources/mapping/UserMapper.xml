@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lhy.driver.dao.UserDao">
+
+    <select id="getUserByName" parameterType="java.lang.String" resultType="com.lhy.driver.pojo.User">
+        SELECT * FROM t_user WHERE username = #{username}
+    </select>
+
+    <select id="getUserById" parameterType="java.lang.Long" resultType="com.lhy.driver.pojo.User">
+        SELECT * FROM t_user WHERE id = #{id}
+    </select>
+
+    <update id="updateUser" parameterType="com.lhy.driver.pojo.User">
+        UPDATE t_user
+        <set>
+            <if test="user.username != null">username = #{user.username},</if>
+            <if test="user.email != null">email = #{user.email},</if>
+            <if test="user.phone != null">phone = #{user.phone},</if>
+            <if test="user.password != null">password = #{user.password},</if>
+            <if test="user.aviator != null">aviator = #{user.aviator},</if>
+            <if test="user.lastlogin != null">lastlogin = #{user.lastlogin},</if>
+        </set>
+        WHERE id = #{user.id}
+    </update>
+
+    <insert id="saveUser" parameterType="com.lhy.driver.pojo.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_user(username,password,email,phone,createtime) VALUES(#{username},#{password},#{email},#{phone},#{createtime})
+    </insert>
+
+    <select id="getUsersCount" resultType="java.lang.Integer">
+        SELECT COUNT(u.id) FROM t_user u
+        LEFT JOIN t_user_role ur on ur.uid = u.id
+        LEFT JOIN t_role r on r.id = ur.rid
+        <where>
+            u.username LIKE #{name}
+            <if test="role != 'all'">
+                AND r.name = #{role}
+            </if>
+        </where>
+    </select>
+
+    <select id="getUsersList" resultType="java.util.HashMap">
+        SELECT u.id as id,u.username as username,u.email as email, u.phone as phone,r.name as rolename,u.createtime as createtime FROM t_user u
+        LEFT JOIN t_user_role ur on ur.uid = u.id
+        LEFT JOIN t_role r on r.id = ur.rid
+        <where>
+            u.username LIKE #{name}
+            <if test="role != 'all'">
+                AND r.name = #{role}
+            </if>
+        </where>
+        ORDER BY u.id DESC limit #{page},#{size}
+    </select>
+
+    <select id="getCountByCreateDate" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_user WHERE createtime &lt; #{date}
+    </select>
+
+    <select id="getCountByRole" resultType="java.lang.Integer">
+        SELECT COUNT(u.id) FROM t_user u
+        LEFT JOIN t_user_role ur on ur.uid = u.id
+        LEFT JOIN t_role r on r.id = ur.rid
+        WHERE r.name = #{role}
+    </select>
+
+    <insert id="saveExamHistory" parameterType="com.lhy.driver.pojo.ExamHistory" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_exam_history(user,item,score,begintime,submittime) VALUES(#{user},#{item},#{score},#{begintime},#{submittime})
+    </insert>
+
+    <select id="getHistoryList" resultType="java.util.HashMap">
+        SELECT concat_ws('·',ib.drivertype,ib.name) as item,eh.score,eh.begintime,eh.submittime
+        FROM t_exam_history eh
+        LEFT JOIN t_itembank ib on ib.id = eh.item
+        WHERE eh.user = #{user} AND ib.drivertype = #{type}
+        ORDER BY eh.begintime DESC
+    </select>
+
+    <select id="getHistoryByItemAndUser" resultType="com.lhy.driver.pojo.ExamHistory">
+        SELECT * FROM t_exam_history
+        WHERE item = #{item} AND user = #{user}
+        ORDER BY begintime DESC limit 10
+    </select>
+
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lhy.driver.dao.PointDao">
+
+    <select id="getPointCount" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_point
+        <where>
+            name LIKE #{name}
+            <if test="ibid != 0">
+                AND ibid = #{ibid}
+            </if>
+        </where>
+    </select>
+
+    <select id="getPointList" resultType="java.util.HashMap">
+        SELECT p.id as id,p.name as name, concat_ws('·',i.drivertype,i.name) as itemname,p.descs as descs FROM t_point p
+        LEFT JOIN t_itembank i ON p.ibid = i.id
+        <where>
+            p.name LIKE #{name}
+            <if test="ibid != 0">
+                AND p.ibid = #{ibid}
+            </if>
+        </where>
+        ORDER BY id DESC limit #{begin},#{size}
+    </select>
+
+    <select id="getPointById" parameterType="java.lang.Long" resultType="com.lhy.driver.pojo.Point">
+        SELECT * FROM t_point WHERE id = #{id}
+    </select>
+
+    <insert id="savePoint" parameterType="com.lhy.driver.pojo.Point">
+        INSERT INTO t_point(name,ibid,descs) VALUES(#{name},#{ibid},#{descs})
+    </insert>
+
+    <update id="updatePoint" parameterType="com.lhy.driver.pojo.Point">
+        UPDATE t_point
+        <set>
+            <if test="point.name != null">name = #{point.name},</if>
+            <if test="point.ibid != null">ibid = #{point.ibid},</if>
+            <if test="point.descs != null">descs = #{point.descs},</if>
+        </set>
+        WHERE id = #{point.id}
+    </update>
+
+    <delete id="deletePoint" parameterType="java.lang.Long">
+        DELETE FROM t_point WHERE id =#{id}
+    </delete>
+
+    <select id="getPointByItemId" parameterType="java.lang.Long" resultType="com.lhy.driver.pojo.Point">
+        SELECT * FROM t_point WHERE ibid = #{ibid}
+    </select>
+
+</mapper>

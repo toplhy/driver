@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lhy.driver.dao.ItemBankDao">
+
+    <select id="getItemBankList" resultType="com.lhy.driver.pojo.ItemBank">
+        SELECT * FROM t_itembank ORDER BY id DESC limit #{begin},#{size}
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_itembank
+    </select>
+
+    <insert id="saveItemBank" parameterType="com.lhy.driver.pojo.ItemBank">
+        INSERT INTO t_itembank(name,drivertype,descs,state,singnum,singscore,multnum,multscore,duration,totalscore,passscore)
+        VALUES(#{name},#{drivertype},#{descs},#{state},#{singnum},#{singscore},#{multnum},#{multscore},#{duration},#{totalscore},#{passscore})
+    </insert>
+
+    <select id="getItemBankById" parameterType="java.lang.Long" resultType="com.lhy.driver.pojo.ItemBank">
+        SELECT * FROM t_itembank WHERE id = #{id}
+    </select>
+
+    <update id="updateItembank" parameterType="com.lhy.driver.pojo.ItemBank">
+        UPDATE t_itembank
+        <set>
+            <if test="itemBank.name != null">name = #{itemBank.name},</if>
+            <if test="itemBank.drivertype != null">drivertype = #{itemBank.drivertype},</if>
+            <if test="itemBank.descs != null">descs = #{itemBank.descs},</if>
+            <if test="itemBank.state != null">state = #{itemBank.state},</if>
+            <if test="itemBank.singnum != null">singnum = #{itemBank.singnum},</if>
+            <if test="itemBank.singscore != null">singscore = #{itemBank.singscore},</if>
+            <if test="itemBank.multnum != null">multnum = #{itemBank.multnum},</if>
+            <if test="itemBank.multscore != null">multscore = #{itemBank.multscore},</if>
+            <if test="itemBank.duration != null">duration = #{itemBank.duration},</if>
+            <if test="itemBank.totalscore != null">totalscore = #{itemBank.totalscore},</if>
+            <if test="itemBank.passscore != null">passscore = #{itemBank.passscore},</if>
+        </set>
+        WHERE id = #{itemBank.id}
+    </update>
+
+    <delete id="deleteItemBank" parameterType="java.lang.Long">
+        DELETE FROM t_itembank WHERE id =#{id}
+    </delete>
+
+    <select id="getItemBankByTypeAndName" resultType="com.lhy.driver.pojo.ItemBank">
+        SELECT * FROM t_itembank WHERE name = #{name} AND drivertype = #{drivertype}
+    </select>
+
+    <select id="getItemBankByType" parameterType="java.lang.String" resultType="com.lhy.driver.pojo.ItemBank">
+        SELECT * FROM t_itembank WHERE drivertype = #{drivertype} AND state = 1
+    </select>
+
+</mapper>

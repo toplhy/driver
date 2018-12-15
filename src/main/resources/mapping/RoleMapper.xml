@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lhy.driver.dao.RoleDao">
+
+    <select id="getUserRoles" parameterType="java.lang.Long" resultType="com.lhy.driver.pojo.Role">
+        SELECT * FROM t_role r LEFT JOIN t_user_role ur ON ur.rid = r.id WHERE ur.uid = #{uid}
+    </select>
+
+    <select id="getRoleByName" parameterType="java.lang.String" resultType="com.lhy.driver.pojo.Role">
+        SELECT * FROM t_role WHERE name = #{name}
+    </select>
+
+    <insert id="saveUserRole" parameterType="com.lhy.driver.pojo.UserRole">
+        INSERT INTO t_user_role(uid,rid) VALUES(#{uid},#{rid})
+    </insert>
+
+</mapper>

@@ -1,0 +1,13 @@
+管理端：
+1.jstree插件：排序
+2.试题导入未实现
+3.试题导出
+  itext + flying-saucer + freemaker
+  (1)不显示中文(解决)
+  (2)不显示图片(解决)
+4.后台文本框校验
+5.统计分析 试题分析
+6.summernote插件表单保存长度问题？数据库text修改为longtext(解决)
+7.PacketTooBigException: Packet for query is too large (1472711 > 1048576). You can change this value on the server by setting the max_allowed_packet' variable.
+  原因：max_allowed_packet是MySQL的一个系统参数，其默认值为1048576(1M)，查询语句为show VARIABLES like '%max_allowed_packet%';
+  解决：修改MySQL安装目录下的my.ini文件中的[mysqld]段中的＂max_allowed_packet = 1M＂为＂max_allowed_packet = 4M＂，没有则增加这一行

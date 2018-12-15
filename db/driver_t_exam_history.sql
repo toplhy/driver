@@ -1,0 +1,59 @@
+-- MySQL dump 10.13  Distrib 5.7.18, for Linux (x86_64)
+--
+-- Host: localhost    Database: driver
+-- ------------------------------------------------------
+-- Server version	5.7.18-0ubuntu0.16.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `t_exam_history`
+--
+
+DROP TABLE IF EXISTS `t_exam_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_exam_history` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `item` bigint(20) DEFAULT NULL COMMENT '考试科目',
+  `user` bigint(20) DEFAULT NULL COMMENT '用户ID',
+  `score` double DEFAULT NULL COMMENT '得分',
+  `begintime` datetime DEFAULT NULL COMMENT '开始时间',
+  `submittime` datetime DEFAULT NULL COMMENT '交卷时间',
+  PRIMARY KEY (`id`),
+  KEY `FK_history_user` (`user`),
+  KEY `FK_history_item` (`item`),
+  CONSTRAINT `FK_history_item` FOREIGN KEY (`item`) REFERENCES `t_itembank` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `FK_history_user` FOREIGN KEY (`user`) REFERENCES `t_user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='考试历史表';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_exam_history`
+--
+
+LOCK TABLES `t_exam_history` WRITE;
+/*!40000 ALTER TABLE `t_exam_history` DISABLE KEYS */;
+INSERT INTO `t_exam_history` VALUES (1,1,2,0,'2017-04-29 21:15:43','2017-04-29 21:15:48'),(2,1,2,1,'2017-04-29 21:15:55','2017-04-29 21:16:08'),(3,1,2,0,'2017-04-30 13:52:41','2017-04-30 13:52:54'),(4,1,2,4,'2017-04-30 14:26:00','2017-04-30 14:26:41'),(5,1,2,5,'2017-04-30 22:07:20','2017-04-30 22:07:43'),(6,1,2,0,'2017-05-15 20:10:34','2017-05-15 20:10:39'),(7,1,2,4,'2017-05-23 22:31:34','2017-05-23 22:31:56'),(8,1,2,3,'2017-05-23 22:38:07','2017-05-23 22:38:35'),(9,1,2,1,'2017-05-23 22:40:58','2017-05-23 22:41:14'),(10,1,2,2,'2017-05-30 15:53:49','2017-05-30 15:54:08'),(11,1,2,2,'2017-06-13 16:53:40','2017-06-13 16:54:31');
+/*!40000 ALTER TABLE `t_exam_history` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2017-06-15 11:27:12

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lhy.driver.dao.QuestionDao">
+
+    <select id="getQuestionCount" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_question
+        <where>
+            <if test="type != 0">
+                AND type = #{type}
+            </if>
+            <if test="ibid != 0">
+                AND ibid = #{ibid}
+            </if>
+        </where>
+    </select>
+
+    <select id="getQuestionList" resultType="java.util.HashMap">
+        SELECT q.id,concat_ws('·',i.drivertype,i.name) as item, d.name as type, q.difficulty as diff, q.keyword as keyword, q.content as content, q.analysis as analysis, q.options as options, q.answer as answer, q.point as points
+        FROM t_question q
+        LEFT JOIN t_itembank i ON i.id = q.ibid
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        <where>
+            <if test="type != 0">
+                AND q.type = #{type}
+            </if>
+            <if test="ibid != 0">
+                AND q.ibid = #{ibid}
+            </if>
+        </where>
+        ORDER BY q.id DESC limit #{page},#{size}
+    </select>
+
+    <insert id="saveQuestion" parameterType="com.lhy.driver.pojo.Question">
+        INSERT INTO t_question(ibid,content,type,options,answer,difficulty,analysis,point,keyword)
+        VALUES(#{ibid},#{content},#{type},#{options},#{answer},#{difficulty},#{analysis},#{point},#{keyword})
+    </insert>
+
+    <select id="getQuestionById" parameterType="java.lang.Long" resultType="java.util.HashMap">
+        SELECT q.id as id,concat_ws('·',i.drivertype,i.name) as item,i.id as itemId, d.name as type, d.id as typeId, q.difficulty as diff, q.keyword as keyword, q.content as content, q.analysis as analysis,q.options as options,q.answer as answer,q.point as points
+        FROM t_question q
+        LEFT JOIN t_itembank i ON i.id = q.ibid
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        WHERE q.id = #{id}
+    </select>
+
+    <delete id="deleteQuestion" parameterType="java.lang.Long">
+        DELETE FROM t_question WHERE id =#{id}
+    </delete>
+
+    <select id="exportQuestions" resultType="java.util.HashMap">
+        SELECT d.name as type, q.content as content, q.analysis as analysis, q.options as options, q.answer as answer
+        FROM t_question q
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        WHERE q.id IN
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <update id="updateQuestion" parameterType="com.lhy.driver.pojo.Question">
+        UPDATE t_question
+        <set>
+            <if test="question.ibid != null">ibid = #{question.ibid},</if>
+            <if test="question.content != null">content = #{question.content},</if>
+            <if test="question.type != null">type = #{question.type},</if>
+            <if test="question.options != null">options = #{question.options},</if>
+            <if test="question.answer != null">answer = #{question.answer},</if>
+            <if test="question.difficulty != null">difficulty = #{question.difficulty},</if>
+            <if test="question.analysis != null">analysis = #{question.analysis},</if>
+            <if test="question.point != null">point = #{question.point},</if>
+            <if test="question.keyword != null">keyword = #{question.keyword},</if>
+        </set>
+        WHERE id = #{question.id}
+    </update>
+
+    <select id="getRandomQuestionsByItem" parameterType="java.lang.Long" resultType="java.util.HashMap">
+        SELECT q.id, q.ibid, q.content, d.name as type, q.options, q.answer, q.difficulty, q.analysis, q.point, q.keyword
+        FROM t_question q
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        WHERE q.ibid = #{itemId}
+    </select>
+
+    <select id="getWrongByQuestionAndUser" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_question_wrong
+        WHERE question = #{qid} AND user = #{uid}
+    </select>
+
+    <insert id="saveWrong">
+        INSERT INTO t_question_wrong(question,user)
+        VALUES(#{qid},#{uid})
+    </insert>
+
+    <select id="hasCollected" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_question_collection
+        WHERE question = #{qid} AND user = #{uid}
+    </select>
+
+    <insert id="saveCollection">
+        INSERT INTO t_question_collection(question,user,createtime)
+        VALUES(#{qid},#{uid},now())
+    </insert>
+
+    <delete id="deleteCollection">
+        DELETE FROM t_question_collection WHERE question = #{qid} AND user = #{uid}
+    </delete>
+
+    <select id="getWrongsByItemAndUser" resultType="java.util.HashMap">
+        SELECT q.id, q.ibid, q.content, d.name as type, q.options, q.answer, q.difficulty, q.analysis, q.point, q.keyword
+        FROM t_question_wrong qw
+        LEFT JOIN t_question q ON q.id = qw.question
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        WHERE q.ibid = #{itemId} AND qw.user = ${uid}
+    </select>
+
+    <select id="getCollectionsByItemAndUser" resultType="java.util.HashMap">
+        SELECT q.id, q.ibid, q.content, d.name as type, q.options, q.answer, q.difficulty, q.analysis, q.point, q.keyword
+        FROM t_question_collection qc
+        LEFT JOIN t_question q ON q.id = qc.question
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        WHERE q.ibid = #{itemId} AND qc.user = ${uid}
+    </select>
+
+    <select id="getSpecialQuestionsByItemAndPoint" resultType="java.util.HashMap">
+        SELECT q.id, q.ibid, q.content, d.name as type, q.options, q.answer, q.difficulty, q.analysis, q.point, q.keyword
+        FROM t_question q
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        WHERE q.ibid = #{itemId} AND q.point like #{point}
+    </select>
+
+    <select id="getDiffQuestionsByItem" parameterType="java.lang.Long" resultType="java.util.HashMap">
+        SELECT q.id, q.ibid, q.content, d.name as type, q.options, q.answer, q.difficulty, q.analysis, q.point, q.keyword
+        FROM t_question q
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        WHERE q.ibid = #{itemId} AND q.difficulty>=3
+    </select>
+
+    <select id="getCommentsBuQuestion" parameterType="java.lang.Long" resultType="java.util.HashMap">
+        SELECT cm.content as content, u.username as username, u.aviator as aviator, cm.createtime as createtime
+        FROM t_comment cm
+        LEFT JOIN t_user u ON u.id = cm.user
+        WHERE cm.question = #{qid}
+    </select>
+
+    <insert id="saveComment">
+        INSERT INTO t_comment(question,user,content,createtime)
+        VALUES(#{question},#{user},#{content},now())
+    </insert>
+
+    <select id="getCountByItemAndPointAndType" resultType="java.lang.Integer">
+        SELECT count(q.id)
+        FROM t_question q
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        WHERE q.ibid = #{itemId} AND q.point like #{point} AND d.name=#{type}
+    </select>
+
+    <select id="getQuestionByItemAndPointAndType" resultType="java.util.HashMap">
+        SELECT q.id, q.ibid, q.content, d.name as type, q.options, q.answer, q.difficulty, q.analysis, q.point, q.keyword
+        FROM t_question q
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        WHERE q.ibid = #{itemId} AND q.point like #{point} AND d.name=#{type}
+    </select>
+
+    <select id="getCountByItemAndType" resultType="java.lang.Integer">
+        SELECT count(q.id)
+        FROM t_question q
+        LEFT JOIN t_dictionary d ON d.id = q.type
+        WHERE q.ibid = #{itemId} AND d.name=#{type}
+    </select>
+
+    <select id="getWrongCountByPointAndUser" resultType="java.lang.Integer">
+        SELECT count(qw.id)
+        FROM t_question_wrong qw
+        LEFT JOIN t_question q ON q.id = qw.question
+        WHERE q.point like #{point} AND qw.user = #{user}
+    </select>
+
+    <select id="getCountByDrivertypeAndType" resultType="java.lang.Integer">
+        SELECT COUNT(q.id) FROM t_question q
+        LEFT JOIN t_itembank ib ON ib.id = q.ibid
+        WHERE ib.drivertype = #{name} AND q.type = #{type}
+    </select>
+
+</mapper>

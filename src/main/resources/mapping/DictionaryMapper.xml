@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lhy.driver.dao.DictionaryDao">
+
+    <select id="getDicByCode" parameterType="java.lang.String" resultType="com.lhy.driver.pojo.Dictionary">
+        SELECT * FROM t_dictionary WHERE code = #{code}
+    </select>
+
+    <select id="getDicById" parameterType="java.lang.Long" resultType="com.lhy.driver.pojo.Dictionary">
+        SELECT * FROM t_dictionary WHERE id = #{id}
+    </select>
+
+    <select id="getDicByNameAndCode" resultType="com.lhy.driver.pojo.Dictionary">
+        SELECT * FROM t_dictionary WHERE name = #{name} AND code = #{code}
+    </select>
+
+</mapper>
